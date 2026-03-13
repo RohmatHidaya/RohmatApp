@@ -57,7 +57,7 @@ public class MainController {
         return productRepository.findAll();
     }
 
-    @GetMapping(path = "/UpdateStock")
+    @PostMapping(path = "/UpdateStock")
     public @ResponseBody String updateStock(@RequestParam Integer id, @RequestParam int stock) {
         Product p = productRepository.findById(id).orElse(null);
         if (p != null) {
