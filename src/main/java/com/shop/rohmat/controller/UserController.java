@@ -1,6 +1,5 @@
 package com.shop.rohmat.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shop.rohmat.dtos.UserDto;
 import com.shop.rohmat.model.User;
 import com.shop.rohmat.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.var;
 
 @RestController
 @AllArgsConstructor
@@ -23,8 +24,9 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public @ResponseBody Iterable<User> getAllUsers() {
-        return userRepository.findAll();
+    public @ResponseBody Iterable<UserDto> getAllUsers() {
+        return userRepository.findAll().stream().map(user -> new UserDto(user.getId(), user.getName(), user.getEmail()))
+                .toList();
     }
 
     @PostMapping(path = "/add")
@@ -39,17 +41,18 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<User> GetUserById(@PathVariable Integer id) {
+    public ResponseEntity<UserDto> GetUserById(@PathVariable Integer id) {
         var user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(user);
+        UserDto userDto = new UserDto(user.getId(), user.getName(), user.getEmail());
+        return ResponseEntity.ok(userDto);
     }
 
     @DeleteMapping(path = "/delete/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable Integer id) {
-        var user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
