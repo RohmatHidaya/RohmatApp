@@ -10,12 +10,13 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Customer {
+public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private String name;
-    private String email;
-    private String address;
+    private String title;
+    private String author;
+    private int price;
+    private int stok;
 }
