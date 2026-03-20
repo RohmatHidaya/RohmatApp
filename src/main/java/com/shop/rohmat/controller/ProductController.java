@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shop.rohmat.dtos.ProductDto;
+import com.shop.rohmat.mappers.ProductMapper;
 import com.shop.rohmat.model.Product;
 import com.shop.rohmat.repository.ProductRepository;
 
@@ -20,10 +21,11 @@ import lombok.AllArgsConstructor;
 @RequestMapping(path = "/products")
 public class ProductController {
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
     @GetMapping
     public @ResponseBody Iterable<ProductDto> getAllProducts() {
-        return productRepository.findAll().stream().map(product -> new ProductDto(product.getId(), product.getName()))
+        return productRepository.findAll().stream().map(product -> productMapper.toDto(product))
                 .toList();
     }
 
@@ -57,7 +59,6 @@ public class ProductController {
         if (product == null) {
             return ResponseEntity.notFound().build();
         }
-        ProductDto productDto = new ProductDto(product.getId(), product.getName());
-        return ResponseEntity.ok(productDto);
+        return ResponseEntity.ok(productMapper.toDto(product));
     }
 }
