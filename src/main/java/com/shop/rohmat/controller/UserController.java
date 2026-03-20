@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shop.rohmat.dtos.UserDto;
+import com.shop.rohmat.mappers.UserMapper;
 import com.shop.rohmat.model.User;
 import com.shop.rohmat.repository.UserRepository;
 
@@ -22,10 +23,11 @@ import lombok.var;
 @RequestMapping(path = "/users")
 public class UserController {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @GetMapping
     public @ResponseBody Iterable<UserDto> getAllUsers() {
-        return userRepository.findAll().stream().map(user -> new UserDto(user.getId(), user.getName(), user.getEmail()))
+        return userRepository.findAll().stream().map(user -> userMapper.toDto(user))
                 .toList();
     }
 
@@ -46,8 +48,7 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        UserDto userDto = new UserDto(user.getId(), user.getName(), user.getEmail());
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @DeleteMapping(path = "/delete/{id}")
