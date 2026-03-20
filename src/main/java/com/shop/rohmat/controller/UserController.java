@@ -16,7 +16,6 @@ import com.shop.rohmat.model.User;
 import com.shop.rohmat.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
-import lombok.var;
 
 @RestController
 @AllArgsConstructor

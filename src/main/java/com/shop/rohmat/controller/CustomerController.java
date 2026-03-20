@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shop.rohmat.dtos.CustomerDto;
 import com.shop.rohmat.model.Customer;
 import com.shop.rohmat.repository.CustomerRepository;
-
+import com.shop.rohmat.mappers.CustomerMapper;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -20,8 +20,9 @@ import lombok.AllArgsConstructor;
 @RequestMapping(path = "/customers")
 public class CustomerController {
     private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
 
-    @PostMapping(path = "/customers")
+    @PostMapping(path = "/customer/add")
     public @ResponseBody String addNewCustomer(@RequestParam String name, @RequestParam String email,
             @RequestParam String address) {
         Customer c = new Customer();
@@ -35,7 +36,7 @@ public class CustomerController {
     @GetMapping
     public @ResponseBody Iterable<CustomerDto> getAllCustomers() {
         return customerRepository.findAll().stream()
-                .map(customer -> new CustomerDto(customer.getId(), customer.getName(), customer.getEmail()))
+                .map(customer -> customerMapper.toDto(customer))
                 .toList();
     }
 
@@ -45,7 +46,6 @@ public class CustomerController {
         if (customer == null) {
             return ResponseEntity.notFound().build();
         }
-        var customerDto = new CustomerDto(customer.getId(), customer.getName(), customer.getEmail());
-        return ResponseEntity.ok(customerDto);
+        return ResponseEntity.ok(customerMapper.toDto(customer));
     }
 }
